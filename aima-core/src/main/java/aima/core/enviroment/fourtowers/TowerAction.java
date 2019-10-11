@@ -8,11 +8,11 @@ import aima.core.util.datastructure.XYLocation;
  * is assumed. Therefore, only the end point needs to be specified.
  * 
  * @author Ignacio Triguero
- * @author Julián de Pablo
+ * @author Juliï¿½n de Pablo
  */
 public class TowerAction extends DynamicAction {
-	public static final String PLACE_TOWER = "placeTowerAt";
-	public static final String REMOVE_TOWER = "removeTowerAt";
+	public static final String REMOVE_TOWER = "removeTowerTo";
+	public static final String PLACE_TOWER = "placeTowerTo";
 	public static final String MOVE_TOWER = "moveTowerTo";
 
 	public static final String ATTRIBUTE_TOWER_LOC = "location";

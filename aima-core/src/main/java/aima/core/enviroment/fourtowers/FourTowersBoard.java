@@ -15,7 +15,7 @@ import aima.core.util.datastructure.XYLocation;
  */
 public class FourTowersBoard implements Cloneable{
 
-	private int[] state;
+	private int[] state = new int[8];
 	
 	/** Parameters for initialization. */
 	public enum Config {
@@ -33,17 +33,17 @@ public class FourTowersBoard implements Cloneable{
 	 * Creates a board with <code>size</code> rows and size columns. Column and
 	 * row indices start with 0.
 	 */
-	public FourTowersBoard(int size) {
-		squares = new boolean[size][size];
-		for (int col = 0; col < size; col++) {
-			for (int row = 0; row < size; row++) {
-				squares[col][row] = false;
-			}
-		}
-		
-	}
+//	public FourTowersBoard(int size) {
+//		squares = new boolean[size][size];
+//		for (int col = 0; col < size; col++) {
+//			for (int row = 0; row < size; row++) {
+//				squares[col][row] = false;
+//			}
+//		}
+//		
+//	}
 	
-	public FourTowersBoard(int size, String mierda) {
+	public FourTowersBoard(int size) {
 		squares = new boolean[size][size];
 		for (int col = 0; col < size; col++) {
 			for (int row = 0; row < size; row++) {
@@ -54,8 +54,22 @@ public class FourTowersBoard implements Cloneable{
 		addTowerAt(new XYLocation(size-1, 0));
 		addTowerAt(new XYLocation(0, size-1));
 		addTowerAt(new XYLocation(size-1, size-1));
+	}
+	
+	public FourTowersBoard(int size, String fin) {
+		squares = new boolean[size][size];
+		for (int col = 0; col < size; col++) {
+			for (int row = 0; row < size; row++) {
+				squares[col][row] = false;
+			}
+		}
+		addTowerAt(new XYLocation(3, 3));
+		addTowerAt(new XYLocation(3, 4));
+		addTowerAt(new XYLocation(4, 3));
+		addTowerAt(new XYLocation(4, 4));
 		
 	}
+	
 	/**
 	 * Creates a board with <code>size</code> rows and size columns. Column and
 	 * row indices start with 0.
@@ -241,7 +255,7 @@ public class FourTowersBoard implements Cloneable{
 		for (int row = 0; row < getSize(); row++) {
 			for (int col = 0; col < getSize(); col++) {
 				if (towerExistsAt(col, row))
-					builder.append('Q');
+					builder.append('T');
 				else
 					builder.append('-');
 			}
@@ -250,34 +264,21 @@ public class FourTowersBoard implements Cloneable{
 		return builder.toString();
 	}
 	
-	public XYLocation getLocationOf(int val) {
-		int pos = getPositionOf(val);
-		return new XYLocation(getXCoord(pos), getYCoord(pos));
-	}
 	
-	public List<XYLocation> getPositions() {
-		ArrayList<XYLocation> result = new ArrayList<>(9);
-		for (int i = 0; i < 9; i++) {
-			int pos = getPositionOf(i);
-			result.add(new XYLocation(getXCoord(pos), getYCoord(pos)));
-		}
-		return result;
-	}
-	
-	private int getPositionOf(int val) {
-		for (int i = 0; i < 8; i++)
-			for(int j = 0; j < 8; j++)
-				if (state[i] == val)
-					return i;
-		return -1;
-	}
-	
-	private int getXCoord(int pos) {
-		return pos;
-	}
-	
-	private int getYCoord(int pos) {
-		return pos;
-	}
+//	private int getPositionOf(int val) {
+//		for (int i = 0; i < 8; i++)
+//			for(int j = 0; j < 8; j++)
+//				if (state[i] == val)
+//					return i;
+//		return -1;
+//	}
+//	
+//	private int getXCoord(int pos) {
+//		return pos;
+//	}
+//	
+//	private int getYCoord(int pos) {
+//		return pos;
+//	}
 
 }
