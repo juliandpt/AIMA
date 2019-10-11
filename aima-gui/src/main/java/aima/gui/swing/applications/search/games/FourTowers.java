@@ -172,6 +172,9 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 				for (int i = 0; i < currSize * currSize; i++) {
 					JButton square = new JButton("");
 					square.setMargin(new Insets(0, 0, 0, 0));
+					if(i == 27 || i == 28 || i == 35 ||i == 36) {
+						square.setBorder(BorderFactory.createLineBorder(Color.RED));
+					};
 					square.setBackground((i % currSize) % 2 == (i / currSize) % 2 ? Color.WHITE : Color.LIGHT_GRAY);
 					square.addActionListener(this);
 					squareButtons[i] = square;
@@ -184,9 +187,8 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 					Math.min(getWidth(), getHeight()) * 3 / 4 / currSize);
 			for (XYLocation loc : board.getTowerPositions()) {
 				JButton square = squareButtons[loc.getX() + loc.getY() * currSize];
-				square.setForeground(board.isSquareUnderAttack(loc) ? Color.RED : Color.BLACK);
 				square.setFont(f);
-				square.setText("Q");
+				square.setText("T");
 			}
 			validate();
 		}
@@ -245,7 +247,7 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 			}
 			if (agent == null) {
 				int sSel = frame.getSelection().getIndex(FourTowersFrame.SEARCH_SEL);
-				Function<FourTowersBoard, List<TowerAction>> actionsFn = FourTowersFunctions::getIFActions;
+				Function<FourTowersBoard, List<TowerAction>> actionsFn = FourTowersFunctions::getIFActionsOneByOne;
 				Problem<FourTowersBoard, TowerAction> problem = new GeneralProblem<>(env.getBoard(),
 						actionsFn, FourTowersFunctions::getResult, FourTowersFunctions::testGoal);
 				SearchForActions<FourTowersBoard, TowerAction> search = SEARCH_ALGOS.get(sSel);
@@ -343,9 +345,8 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 		 */
 		@Override
 		public void execute(Agent<?, ?> agent, TowerAction action) {
-			XYLocation loc = new XYLocation(action.getX(), action.getY());
 			if (action.getName() == TowerAction.MOVE_TOWER)
-				board.moveTowerTo(loc);
+				board.moveTower(action);
 		}
 
 		/** Returns null. */

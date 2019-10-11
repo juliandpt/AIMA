@@ -28,7 +28,7 @@ public class FourTowersFunctions {
 	public static final FourTowersBoard GOAL_STATE = new FourTowersBoard(8, "shit");
 
 	public static Problem<FourTowersBoard, TowerAction> createIncrementalFormulationProblem(int boardSize) {
-		return new GeneralProblem<>(new FourTowersBoard(boardSize), FourTowersFunctions::getIFActions,
+		return new GeneralProblem<>(new FourTowersBoard(boardSize), FourTowersFunctions::getIFActionsOneByOne,
 				FourTowersFunctions::getResult, FourTowersFunctions::testGoal);
 	}
 
@@ -46,17 +46,8 @@ public class FourTowersFunctions {
 	 * board, and provides queen placing actions for all non-attacked positions of
 	 * the first free column.
 	 */
-
-	public static List<TowerAction> getIFActions(FourTowersBoard state) {
+	public static List<TowerAction> getIFActionsNOTOK(FourTowersBoard state) {
 		List<TowerAction> actions = new ArrayList<>();
-
-//        int numQueens = state.getNumberOfTowersOnBoard();
-//        int boardSize = state.getSize();
-//        for (int i = 0; i < boardSize; i++) {
-//            XYLocation newLocation = new XYLocation(numQueens, i);
-//            if (!(state.isSquareUnderAttack(newLocation)))
-//                actions.add(new TowerAction(TowerAction.PLACE_TOWER, newLocation));
-//        }
 
 		/**
 		 * Coger los cuatro movimientos hasta el final 0,y x,0 size,y x,size y ver si
@@ -127,49 +118,50 @@ public class FourTowersFunctions {
 				}
 			}
 			choca = false;
+		}
+		return actions;
+	}
 
-//			// movimiento hacia izquierda
-//			if (x != 0)
-//				if (!state.towerExistsAt(new XYLocation(x - 1, y)))
-//					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x - 1, y)));
-//
-//			// movimiento hacia derecha
-//			if (x != 7)
-//				if (!state.towerExistsAt(new XYLocation(x + 1, y)))
-//					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x + 1, y)));
-//
-//			// movimiento hacia arriba
-//			if (y != 0)
-//				if (!state.towerExistsAt(new XYLocation(x, y - 1)))
-//					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x, y - 1)));
-//
-//			// movimiento hacia abajo
-//			if (y != 7)
-//				if (!state.towerExistsAt(new XYLocation(x, y + 1)))
-//					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x, y + 1)));
+	public static List<TowerAction> getIFActionsOneByOne(FourTowersBoard state) {
+		List<TowerAction> actions = new ArrayList<>();
+
+		/**
+		 * Coger los cuatro movimientos hasta el final 0,y x,0 size,y x,size y ver si
+		 * hay alguna torre en esa fila/columna con la que chocarme
+		 * 
+		 */
+		List<XYLocation> torres = state.getTowerPositions();
+
+		for (int i = 0; i < torres.size(); i++) {
+			System.out.println(state);
+			int x = torres.get(i).getX();
+			int y = torres.get(i).getY();
+			boolean choca = false;
+
+			// movimiento hacia izquierda
+			if (x != 0)
+				if (!state.towerExistsAt(new XYLocation(x - 1, y)))
+					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x - 1, y), new XYLocation(x, y)));
+
+			// movimiento hacia derecha
+			if (x != 7)
+				if (!state.towerExistsAt(new XYLocation(x + 1, y)))
+					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x + 1, y), new XYLocation(x, y)));
+
+			// movimiento hacia arriba
+			if (y != 0)
+				if (!state.towerExistsAt(new XYLocation(x, y - 1)))
+					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x, y - 1), new XYLocation(x, y)));
+
+			// movimiento hacia abajo
+			if (y != 7)
+				if (!state.towerExistsAt(new XYLocation(x, y + 1)))
+					actions.add(new TowerAction(TowerAction.MOVE_TOWER, new XYLocation(x, y + 1), new XYLocation(x, y)));
 
 		}
 		System.out.println(actions);
 		return actions;
 	}
-
-	/**
-	 * Implements an ACTIONS function for the complete-state formulation of the
-	 * n-queens problem.
-	 * <p>
-	 * Assumes exactly one queen in each column and provides all possible queen
-	 * movements in vertical direction as actions.
-	 */
-//    public static List<TowerAction> getCSFActions(FourTowersBoard state) {
-//        List<TowerAction> actions = new ArrayList<>();
-//        for (int i = 0; i < state.getSize(); i++)
-//            for (int j = 0; j < state.getSize(); j++) {
-//                XYLocation loc = new XYLocation(i, j);
-//                if (!state.towerExistsAt(loc))
-//                    actions.add(new TowerAction(TowerAction.MOVE_TOWER, loc));
-//            }
-//        return actions;
-//    }
 
 	/**
 	 * Implements a RESULT function for the n-queens problem. Supports queen
@@ -182,8 +174,9 @@ public class FourTowersFunctions {
 //			result.addTowerAt(action.getLocation());
 //		else if (Objects.equals(action.getName(), TowerAction.REMOVE_TOWER))
 //			result.removeTowerFrom(action.getLocation());
-		if (Objects.equals(action.getName(), TowerAction.MOVE_TOWER))
-			result.moveTowerTo(action.getLocation());
+		if (Objects.equals(action.getName(), TowerAction.MOVE_TOWER)) {
+			result.moveTower(action);
+		}
 		// if action is not understood or is a NoOp
 		// the result will be the current state.
 		return result;
