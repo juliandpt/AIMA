@@ -10,11 +10,13 @@ import aima.core.util.datastructure.XYLocation;
  * Represents a quadratic board with a matrix of squares on which towers can be
  * placed (only one per square) and moved.
  * 
- * @author Julián de Pablo
+ * @author Juliï¿½n de Pablo
  * @author Ignacio Triguero
  */
-public class FourTowersBoard {
+public class FourTowersBoard implements Cloneable{
 
+	private int[] state;
+	
 	/** Parameters for initialization. */
 	public enum Config {
 		EMPTY, TOWERS_IN_FIRST_ROW, TOWERS_IN_EVERY_COL
@@ -38,8 +40,22 @@ public class FourTowersBoard {
 				squares[col][row] = false;
 			}
 		}
+		
 	}
-
+	
+	public FourTowersBoard(int size, String mierda) {
+		squares = new boolean[size][size];
+		for (int col = 0; col < size; col++) {
+			for (int row = 0; row < size; row++) {
+				squares[col][row] = false;
+			}
+		}
+		addTowerAt(new XYLocation(0, 0));
+		addTowerAt(new XYLocation(size-1, 0));
+		addTowerAt(new XYLocation(0, size-1));
+		addTowerAt(new XYLocation(size-1, size-1));
+		
+	}
 	/**
 	 * Creates a board with <code>size</code> rows and size columns. Column and
 	 * row indices start with 0.
@@ -50,14 +66,18 @@ public class FourTowersBoard {
 	 */
 	public FourTowersBoard(int size, Config config) {
 		this(size);
-		if (config == Config.TOWERS_IN_FIRST_ROW) {
-			for (int col = 0; col < size; col++)
-				addTowerAt(new XYLocation(col, 0));
-		} else if (config == Config.TOWERS_IN_EVERY_COL) {
-			Random r = new Random();
-			for (int col = 0; col < size; col++)
-				addTowerAt(new XYLocation(col, r.nextInt(size)));
-		}
+		addTowerAt(new XYLocation(0, 0));
+		addTowerAt(new XYLocation(size-1, 0));
+		addTowerAt(new XYLocation(0, size-1));
+		addTowerAt(new XYLocation(size-1, size-1));
+//		if (config == Config.TOWERS_IN_FIRST_ROW) {
+			//for (int col = 0; col < size; col++)
+				//addTowerAt(new XYLocation(col, 0));
+//		} else if (config == Config.TOWERS_IN_EVERY_COL) {
+//			Random r = new Random();
+//			for (int col = 0; col < size; col++)
+////				addTowerAt(new XYLocation(col, r.nextInt(size)));
+//		}
 	}
 
 	public int getSize() {
@@ -123,6 +143,8 @@ public class FourTowersBoard {
 		return count;
 	}
 
+	
+	
 	public List<XYLocation> getTowerPositions() {
 		ArrayList<XYLocation> result = new ArrayList<>();
 		for (int col = 0; col < getSize(); col++) {
@@ -134,7 +156,10 @@ public class FourTowersBoard {
 		return result;
 
 	}
-
+	
+	
+	
+	
 	public int getNumberOfAttackingPairs() {
 		return getTowerPositions().stream().mapToInt(this::getNumberOfAttacksOn).sum() / 2;
 	}
@@ -179,6 +204,10 @@ public class FourTowersBoard {
 		return result;
 	}
 
+	
+	
+	
+	
 	@Override
 	public int hashCode() {
 		int result = 0;
@@ -220,4 +249,35 @@ public class FourTowersBoard {
 		}
 		return builder.toString();
 	}
+	
+	public XYLocation getLocationOf(int val) {
+		int pos = getPositionOf(val);
+		return new XYLocation(getXCoord(pos), getYCoord(pos));
+	}
+	
+	public List<XYLocation> getPositions() {
+		ArrayList<XYLocation> result = new ArrayList<>(9);
+		for (int i = 0; i < 9; i++) {
+			int pos = getPositionOf(i);
+			result.add(new XYLocation(getXCoord(pos), getYCoord(pos)));
+		}
+		return result;
+	}
+	
+	private int getPositionOf(int val) {
+		for (int i = 0; i < 8; i++)
+			for(int j = 0; j < 8; j++)
+				if (state[i] == val)
+					return i;
+		return -1;
+	}
+	
+	private int getXCoord(int pos) {
+		return pos;
+	}
+	
+	private int getYCoord(int pos) {
+		return pos;
+	}
+
 }
