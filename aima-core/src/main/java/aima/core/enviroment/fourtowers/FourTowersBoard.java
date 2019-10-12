@@ -2,7 +2,6 @@ package aima.core.enviroment.fourtowers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import aima.core.agent.Action;
 import aima.core.agent.impl.DynamicAction;
@@ -33,20 +32,6 @@ public class FourTowersBoard implements Cloneable {
 	 */
 	private boolean[][] squares;
 
-	/**
-	 * Creates a board with <code>size</code> rows and size columns. Column and row
-	 * indices start with 0.
-	 */
-//	public FourTowersBoard(int size) {
-//		squares = new boolean[size][size];
-//		for (int col = 0; col < size; col++) {
-//			for (int row = 0; row < size; row++) {
-//				squares[col][row] = false;
-//			}
-//		}
-//		
-//	}
-
 	public FourTowersBoard(int size) {
 		squares = new boolean[size][size];
 		for (int col = 0; col < size; col++) {
@@ -72,29 +57,6 @@ public class FourTowersBoard implements Cloneable {
 		addTowerAt(new XYLocation(4, 3));
 		addTowerAt(new XYLocation(4, 4));
 
-	}
-
-	/**
-	 * Creates a board with <code>size</code> rows and size columns. Column and row
-	 * indices start with 0.
-	 * 
-	 * @param config Controls whether the board is initially empty or contains some
-	 *               queens.
-	 */
-	public FourTowersBoard(int size, Config config) {
-		this(size);
-		addTowerAt(new XYLocation(0, 0));
-		addTowerAt(new XYLocation(size - 1, 0));
-		addTowerAt(new XYLocation(0, size - 1));
-		addTowerAt(new XYLocation(size - 1, size - 1));
-//		if (config == Config.TOWERS_IN_FIRST_ROW) {
-		// for (int col = 0; col < size; col++)
-		// addTowerAt(new XYLocation(col, 0));
-//		} else if (config == Config.TOWERS_IN_EVERY_COL) {
-//			Random r = new Random();
-//			for (int col = 0; col < size; col++)
-////				addTowerAt(new XYLocation(col, r.nextInt(size)));
-//		}
 	}
 
 	public int getSize() {

@@ -5,6 +5,7 @@ import aima.core.enviroment.fourtowers.FourTowersBoard;
 import aima.core.enviroment.fourtowers.FourTowersFunctions;
 import aima.core.enviroment.fourtowers.TowerAction;
 import aima.core.environment.eightpuzzle.EightPuzzleFunctions;
+import aima.core.environment.nqueens.NQueensFunctions;
 import aima.core.search.agent.SearchAgent;
 import aima.core.search.framework.SearchForActions;
 import aima.core.search.framework.problem.GeneralProblem;
@@ -20,6 +21,7 @@ import aima.core.search.uninformed.DepthFirstSearch;
 import aima.core.search.uninformed.DepthLimitedSearch;
 import aima.core.search.uninformed.IterativeDeepeningSearch;
 import aima.core.util.datastructure.XYLocation;
+import aima.gui.swing.applications.search.games.NQueensApp.NQueensFrame;
 import aima.gui.swing.framework.*;
 import aima.core.agent.*;
 import aima.core.agent.Action;
@@ -54,27 +56,8 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 	}
 
 	static {
-		/*addSearchAlgorithm("Depth First Search (Graph Search)",
-				new DepthFirstSearch<>(new GraphSearch<>()));
-		addSearchAlgorithm("Breadth First Search (Tree Search)",
-				new BreadthFirstSearch<>(new TreeSearch<>()));
-		addSearchAlgorithm("Breadth First Search (Graph Search)",
-				new BreadthFirstSearch<>(new GraphSearch<>()));
-		addSearchAlgorithm("Depth Limited Search (8)", new DepthLimitedSearch<>(8));
-		addSearchAlgorithm("Iterative Deepening Search", new IterativeDeepeningSearch<>());
-		
-		*/
 		addSearchAlgorithm("A* Search", 
 				new AStarSearch<>(new GraphSearch<>(), FourTowersFunctions::getManhattanDistance));
-		
-		
-		
-		
-		/*addSearchAlgorithm("Hill Climbing Search", new HillClimbingSearch<>
-				(n -> -NQueensFunctions.getNumberOfAttackingPairs(n)));
-		addSearchAlgorithm("Simulated Annealing Search",
-				new SimulatedAnnealingSearch<>(NQueensFunctions::getNumberOfAttackingPairs,
-						new Scheduler(20, 0.045, 1000)));*/
 	}
 
 	/** Returns a <code>NQueensView</code> instance. */
@@ -114,15 +97,15 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 	protected static class FourTowersFrame extends AgentAppFrame<Percept, TowerAction> {
 		private static final long serialVersionUID = 1L;
 		public static String ENV_SEL = "EnvSelection";
-//		public static String PROBLEM_SEL = "ProblemSelection";
+		public static String PROBLEM_SEL = "ProblemSelection";
 		public static String SEARCH_SEL = "SearchSelection";
 
 		public FourTowersFrame() {
 			setTitle("Four Towers Application");
-			setSelectors(new String[] { ENV_SEL/*, PROBLEM_SEL*/, SEARCH_SEL },
+			setSelectors(new String[] { ENV_SEL, PROBLEM_SEL, SEARCH_SEL },
 					new String[] { "Select Environment", "Select Problem Formulation", "Select Search" });
-			setSelectorItems(ENV_SEL, new String[] { "8 Towers" }, 0);
-//			setSelectorItems(PROBLEM_SEL, new String[] { "Incremental" }, 0);
+			setSelectorItems(ENV_SEL, new String[] { "4 Towers" }, 0);
+			setSelectorItems(PROBLEM_SEL, new String[] { "De 1 en 1", "Hasta el final" }, 1);
 			setSelectorItems(SEARCH_SEL, (String[]) SEARCH_NAMES.toArray(new String[] {}), 0);
 			setEnvView(new FourTowersView());
 			setSize(800, 600);
@@ -199,13 +182,6 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent ae) {
-			for (int i = 0; i < currSize * currSize; i++) {
-				if (ae.getSource() == squareButtons[i]) {
-					FourTowersController contr = (FourTowersController) getController();
-					XYLocation loc = new XYLocation(i % currSize, i / currSize);
-					contr.modifySquare(loc);
-				}
-			}
 		}
 	}
 
@@ -246,8 +222,13 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 				agent = null;
 			}
 			if (agent == null) {
+				int pSel = frame.getSelection().getIndex(NQueensFrame.PROBLEM_SEL);
 				int sSel = frame.getSelection().getIndex(FourTowersFrame.SEARCH_SEL);
-				Function<FourTowersBoard, List<TowerAction>> actionsFn = FourTowersFunctions::getIFActionsOneByOne;
+				Function<FourTowersBoard, List<TowerAction>> actionsFn;
+				if (pSel == 1)
+					actionsFn = FourTowersFunctions::getIFActionsFinal;
+				else
+					actionsFn = FourTowersFunctions::getIFActionsOneByOne;
 				Problem<FourTowersBoard, TowerAction> problem = new GeneralProblem<>(env.getBoard(),
 						actionsFn, FourTowersFunctions::getResult, FourTowersFunctions::testGoal);
 				SearchForActions<FourTowersBoard, TowerAction> search = SEARCH_ALGOS.get(sSel);
@@ -308,18 +289,6 @@ public class FourTowers extends SimpleAgentApp<Percept, TowerAction> {
 				result.append("\n").append(key).append(" : ").append(property);
 			}
 			return result.toString();
-		}
-
-		public void modifySquare(XYLocation loc) {
-			boardDirty = true;
-			String atype;
-			if (env.getBoard().towerExistsAt(loc))
-				atype = TowerAction.REMOVE_TOWER;
-			else
-				atype = TowerAction.PLACE_TOWER;
-			env.execute(null, new TowerAction(atype, loc));
-			agent = null;
-			frame.updateEnabledState();
 		}
 
 		@Override
